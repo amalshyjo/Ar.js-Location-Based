@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // getting places from APIs
 function loadPlaces(position) {
     const params = {
@@ -6,6 +7,62 @@ function loadPlaces(position) {
         clientSecret: '5PM4NTAA1153TBA2TPAP1FJRES0Y0V13KDQ3GKONSEX2Z3NN',
         version: '20300101',    // foursquare versioning, required but unuseful for this demo
     };
+=======
+window.onload = () => {
+    const button = document.querySelector('button[data-action="change"]');
+    button.innerText = '﹖';
+
+    let places = staticLoadPlaces();
+    renderPlaces(places);
+};
+
+function staticLoadPlaces() {
+    return [
+        {
+            name: 'Pokèmon',
+            location: {
+                // lat: <your-latitude>,
+                // lng: <your-longitude>,
+            },
+        },
+    ];
+}
+
+var models = [
+    {
+        url: './assets/magnemite/scene.gltf',
+        scale: '0.5 0.5 0.5',
+        info: 'Magnemite, Lv. 5, HP 10/10',
+        rotation: '0 180 0',
+    },
+    {
+        url: './assets/articuno/scene.gltf',
+        scale: '0.2 0.2 0.2',
+        rotation: '0 180 0',
+        info: 'Articuno, Lv. 80, HP 100/100',
+    },
+    {
+        url: './assets/dragonite/scene.gltf',
+        scale: '0.08 0.08 0.08',
+        rotation: '0 180 0',
+        info: 'Dragonite, Lv. 99, HP 150/150',
+    },
+];
+
+var modelIndex = 0;
+var setModel = function (model, entity) {
+    if (model.scale) {
+        entity.setAttribute('scale', model.scale);
+    }
+
+    if (model.rotation) {
+        entity.setAttribute('rotation', model.rotation);
+    }
+
+    if (model.position) {
+        entity.setAttribute('position', model.position);
+    }
+>>>>>>> parent of c54c2c5... V2 location change
 
     // CORS Proxy to avoid CORS problems
     const corsProxy = 'https://cors-anywhere.herokuapp.com/';

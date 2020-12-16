@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-// getting places from APIs
-function loadPlaces(position) {
-    const params = {
-        radius: 300,    // search places not farther than this value (in meters)
-        clientId: 'EZUUF4A2UX00IFX4D54IOLB3UKYYZHWNWRTASUDD4N2Y3WRB',
-        clientSecret: '5PM4NTAA1153TBA2TPAP1FJRES0Y0V13KDQ3GKONSEX2Z3NN',
-        version: '20300101',    // foursquare versioning, required but unuseful for this demo
-    };
-=======
 window.onload = () => {
     const button = document.querySelector('button[data-action="change"]');
     button.innerText = '﹖';
@@ -62,64 +52,34 @@ var setModel = function (model, entity) {
     if (model.position) {
         entity.setAttribute('position', model.position);
     }
->>>>>>> parent of c54c2c5... V2 location change
 
-    // CORS Proxy to avoid CORS problems
-    const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+    entity.setAttribute('gltf-model', model.url);
 
-    // Foursquare API (limit param: number of maximum places to fetch)
-    const endpoint = `${corsProxy}https://api.foursquare.com/v2/venues/search?intent=checkin
-        &ll=${position.latitude},${position.longitude}
-        &radius=${params.radius}
-        &client_id=${params.clientId}
-        &client_secret=${params.clientSecret}
-        &limit=30 
-        &v=${params.version}`;
-    return fetch(endpoint)
-        .then((res) => {
-            return res.json()
-                .then((resp) => {
-                    return resp.response.venues;
-                })
-        })
-        .catch((err) => {
-            console.error('Error with places API', err);
-        })
+    const div = document.querySelector('.instructions');
+    div.innerText = model.info;
 };
 
+function renderPlaces(places) {
+    let scene = document.querySelector('a-scene');
 
-window.onload = () => {
-    const scene = document.querySelector('a-scene');
+    places.forEach((place) => {
+        let latitude = place.location.lat;
+        let longitude = place.location.lng;
 
-    // first get current user location
-    return navigator.geolocation.getCurrentPosition(function (position) {
+        let model = document.createElement('a-entity');
+        model.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
 
-        // than use it to load from remote APIs some places nearby
-        loadPlaces(position.coords)
-            .then((places) => {
-                places.forEach((place) => {
-                    const latitude = place.location.lat;
-                    const longitude = place.location.lng;
+        setModel(models[modelIndex], model);
 
-                    // add place name
-                    const placeText = document.createElement('a-link');
-                    placeText.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-                    placeText.setAttribute('title', place.name);
-                    placeText.setAttribute('scale', '15 15 15');
-                    
-                    placeText.addEventListener('loaded', () => {
-                        window.dispatchEvent(new CustomEvent('gps-entity-place-loaded'))
-                    });
+        model.setAttribute('animation-mixer', '');
 
-                    scene.appendChild(placeText);
-                });
-            })
-    },
-        (err) => console.error('Error in retrieving position', err),
-        {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 27000,
-        }
-    );
-};
+        document.querySelector('button[data-action="change"]').addEventListener('click', function () {
+            var entity = document.querySelector('[gps-entity-place]');
+            modelIndex++;
+            var newIndex = modelIndex % models.length;
+            setModel(models[newIndex], entity);
+        });
+
+        scene.appendChild(model);
+    });
+}
